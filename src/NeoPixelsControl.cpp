@@ -32,16 +32,61 @@ bool NeoPixelsControl::begin() {
 }
 
 /// @brief Receives an action
-/// @param action The action to process (WIP))
-/// @param payload TBD
+/// @param action The action to process 0 to set colors 1 to set brightness
+/// @param payload Either an array or RGB(W) values, or a brightness value 0-255
 /// @return JSON response with OK
 std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payload) {
 	if (action == 0) {
-
-	} else if (action ==2) {
-		
+		// Allocate the JSON document
+		JsonDocument doc;
+		// Deserialize file contents
+		DeserializationError error = deserializeJson(doc, payload);
+		// Test if parsing succeeds.
+		if (error) {
+			Logger.print(F("Deserialization failed: "));
+			Logger.println(error.f_str());
+			return { false, R"({"Response": "Error"})" };
+		}
+		if (doc['RGB_Values'][0].size() == 3) {
+			// Assign loaded values
+			uint8_t RGB_Values[led_config.LEDCount][3];
+			for (int i = 0; i < led_config.LEDCount; i++) {
+				RGB_Values[i][0] = doc["RGB_Values"][i][0].as<uint8_t>();
+				RGB_Values[i][1] = doc["RGB_Values"][i][1].as<uint8_t>();
+				RGB_Values[i][2] = doc["RGB_Values"][i][2].as<uint8_t>();
+			}
+			writePixels(RGB_Values);
+		} else {
+			// Assign loaded values
+			uint8_t RGBW_Values[led_config.LEDCount][4];
+			for (int i = 0; i < led_config.LEDCount; i++) {
+				RGBW_Values[i][0] = doc["RGB_Values"][i][0].as<uint8_t>();
+				RGBW_Values[i][1] = doc["RGB_Values"][i][1].as<uint8_t>();
+				RGBW_Values[i][2] = doc["RGB_Values"][i][2].as<uint8_t>();
+				RGBW_Values[i][2] = doc["RGB_Values"][i][3].as<uint8_t>();
+			}
+			writePixels(RGBW_Values);
+		}
+		// Return success
+		return { true, R"({"Response": "OK"})" };
+	} else if (action == 1) {
+		// Allocate the JSON document
+		JsonDocument doc;
+		// Deserialize file contents
+		DeserializationError error = deserializeJson(doc, payload);
+		// Test if parsing succeeds.
+		if (error) {
+			Logger.print(F("Deserialization failed: "));
+			Logger.println(error.f_str());
+			return { false, R"({"Response": "Error"})" };
+		}
+		// Assign loaded values
+		uint8_t brightness = doc["Brightness"].as<uint8_t>();
+		// Write the brightness
+		writeBrightness(brightness);
+		return { true, R"({"Response": "OK"})" };
 	}
-	return { true, R"({"Response": "OK"})" };
+	return { false, R"({"Response": "Error: Unknown action"})" };
 }
 
 /// @brief Gets the current config
