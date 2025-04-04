@@ -1,0 +1,63 @@
+{
+	"name": "actor-NeoPixelControl",
+	"version": "0.5.0",
+	"description": "Controls a number of NeoPixel",
+	"keywords": "Fabrica-IO, actor, output, led",
+	"repository":
+	{
+	  "type": "git",
+	  "url": "https://github.com/FabricaIO/actor-NeoPixelControl.git"
+	},
+	"authors":
+	[
+	  {
+		"name": "Sam Groveman",
+		"email": "SamGroveman@outlook.com",
+		"url": "https://github.com/FabricaIO"
+	  }
+	],
+	"dependencies": {
+		"Adafruit NeoPixel": "adafruit/Adafruit NeoPixel@^1.12.3"
+	},
+	"license": "GPLv3",
+	"homepage": "https://github.com/FabricaIO",
+	"frameworks": "arduino",
+	"platforms": "*",
+	"fabrica-io" : {
+		"name": "NeoPixels",
+		"type": 1,
+		"category": "Output",
+		"libname": "NeoPixelControl",
+		"includes": ["NeoPixelControl"],
+		"description": "Controls a number of NeoPixels",
+		"constructor":
+		[
+			[
+				{
+					"name": "Pin",
+					"type": "int",
+					"description": "The pin to use",
+					"default": ""
+				},
+				{
+					"name": "LEDCount",
+					"type": "int",
+					"description": "The number of LEDs on the strip",
+					"default": ""
+				},
+				{
+					"name": "RGB_Type",
+					"type": "neoPixelType",
+					"description": "The type of RGB LED to use",
+					"default": "NEO_GRB + NEO_KHZ800"
+				},
+				{
+					"name": "Configfile",
+					"type": "String",
+					"description": "The file name to store settings in",
+					"default": "NeoPixels.json"
+				}
+			]
+		]
+	}
+  }
