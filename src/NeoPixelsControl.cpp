@@ -47,7 +47,7 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 			Logger.println(error.f_str());
 			return { false, R"({"Response": "Error"})" };
 		}
-		if (doc['RGB_Values'][0].size() == 3) {
+		if (doc["RGB_Values"][0].size() == 3) {
 			// Assign loaded values
 			uint8_t RGB_Values[led_config.LEDCount][3];
 			for (int i = 0; i < led_config.LEDCount; i++) {
@@ -56,7 +56,7 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 				RGB_Values[i][2] = doc["RGB_Values"][i][2].as<uint8_t>();
 			}
 			writePixels(RGB_Values);
-		} else {
+		} else if (doc["RGB_Values"][0].size() == 4){
 			// Assign loaded values
 			uint8_t RGBW_Values[led_config.LEDCount][4];
 			for (int i = 0; i < led_config.LEDCount; i++) {
@@ -66,6 +66,8 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 				RGBW_Values[i][2] = doc["RGB_Values"][i][3].as<uint8_t>();
 			}
 			writePixels(RGBW_Values);
+		} else {
+			return { false, R"({"Response": "Error: incorrect number of RGB(W) values"})" };
 		}
 		// Return success
 		return { true, R"({"Response": "OK"})" };
