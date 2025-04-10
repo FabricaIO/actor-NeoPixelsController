@@ -19,7 +19,7 @@ bool NeoPixelsControl::begin() {
 	// Set description
 	Description.actionQuantity = 1;
 	Description.type = "output";
-	Description.actions = {{"setcolor", 0}, {"setbrightness", 1}};
+	Description.actions = {{"setcolor", 0}};
 	leds = new Adafruit_NeoPixel(led_config.LEDCount, led_config.Pin, led_config.RGB_Type);
 	// Create settings directory if necessary
 	if (!checkConfig(config_path)) {
@@ -71,23 +71,7 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 		}
 		// Return success
 		return { true, R"({"Response": "OK"})" };
-	} else if (action == 1) {
-		// Allocate the JSON document
-		JsonDocument doc;
-		// Deserialize file contents
-		DeserializationError error = deserializeJson(doc, payload);
-		// Test if parsing succeeds.
-		if (error) {
-			Logger.print(F("Deserialization failed: "));
-			Logger.println(error.f_str());
-			return { false, R"({"Response": "Error"})" };
-		}
-		// Assign loaded values
-		uint8_t brightness = doc["Brightness"].as<uint8_t>();
-		// Write the brightness
-		writeBrightness(brightness);
-		return { true, R"({"Response": "OK"})" };
-	}
+	} 
 	return { false, R"({"Response": "Error: Unknown action"})" };
 }
 
@@ -163,15 +147,6 @@ bool NeoPixelsControl::writePixels(uint8_t RGBW_Values[][4]) {
 	for (int i = 0; i < led_config.LEDCount; i++) {
 		leds->setPixelColor(i, RGBW_Values[i][0], RGBW_Values[i][1], RGBW_Values[i][2], RGBW_Values[i][3]);
 	}
-	leds->show();
-	return true;
-}
-
-/// @brief Set overall brightness of strip
-/// @param brightness Brightness from 0-255
-/// @return True on success
-bool NeoPixelsControl::writeBrightness(uint8_t brightness) {
-	leds->setBrightness(brightness);
 	leds->show();
 	return true;
 }

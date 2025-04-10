@@ -1,5 +1,5 @@
 /*
-* This file and associated .cpp file are licensed under the GPLv3 License Copyright (c) 2024 Sam Groveman
+* This file and associated .cpp file are licensed under the GPLv3 License Copyright (c) 2025 Sam Groveman
 * 
 * ArduinoJSON: https://arduinojson.org/
 *
@@ -36,8 +36,6 @@ class NeoPixelsControl : public Actor {
 
 		bool writePixels(uint8_t RGB_Values[][3]);
 		bool writePixels(uint8_t RGBW_Values[][4]);
-		bool writeBrightness(uint8_t brightness);
-		
 
 	public:
 		NeoPixelsControl(String Name, int Pin, int LEDCount, neoPixelType RGB_Type = NEO_GRB + NEO_KHZ800, String configFile = "NeoPixelsControl.json");
