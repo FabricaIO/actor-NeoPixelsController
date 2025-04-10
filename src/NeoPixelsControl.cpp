@@ -63,7 +63,7 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 				RGBW_Values[i][0] = doc["RGB_Values"][i][0].as<uint8_t>();
 				RGBW_Values[i][1] = doc["RGB_Values"][i][1].as<uint8_t>();
 				RGBW_Values[i][2] = doc["RGB_Values"][i][2].as<uint8_t>();
-				RGBW_Values[i][2] = doc["RGB_Values"][i][3].as<uint8_t>();
+				RGBW_Values[i][3] = doc["RGB_Values"][i][3].as<uint8_t>();
 			}
 			writePixels(RGBW_Values);
 		} else {
