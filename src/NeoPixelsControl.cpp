@@ -84,6 +84,7 @@ String NeoPixelsControl::getConfig() {
 	doc["Name"] = Description.name;
 	doc["Pin"] = led_config.Pin;
 	doc["LEDCount"] = led_config.LEDCount;
+	doc["gammaCorrection"] = led_config.gammaCorrection;
 	doc["RGB_Type"] = (uint16_t)led_config.RGB_Type;
 
 	// Create string to hold output
@@ -112,6 +113,7 @@ bool NeoPixelsControl::setConfig(String config, bool save) {
 	Description.name = doc["Name"].as<String>();
 	led_config.Pin = doc["Pin"].as<int>();
 	led_config.LEDCount = doc["LEDCount"].as<int>();
+	led_config.gammaCorrection = doc["gammaCorrection"].as<bool>();
 	led_config.RGB_Type = (neoPixelType)doc["RGB_Type"].as<uint16_t>();
 	if (save) {
 		if (!saveConfig(config_path, getConfig())) {
@@ -134,7 +136,11 @@ bool NeoPixelsControl::configureOutput() {
 /// @return True on success
 bool NeoPixelsControl::writePixels(uint8_t RGB_Values[][3]) {
 	for (int i = 0; i < led_config.LEDCount; i++) {
-		leds->setPixelColor(i, RGB_Values[i][0], RGB_Values[i][1], RGB_Values[i][2]);
+		uint32_t color = leds->Color(RGB_Values[i][0], RGB_Values[i][1], RGB_Values[i][2]);
+		if (led_config.gammaCorrection) {
+			color = leds->gamma32(color);
+		}
+		leds->setPixelColor(i, color);
 	}
 	leds->show();
 	return true;
@@ -145,7 +151,11 @@ bool NeoPixelsControl::writePixels(uint8_t RGB_Values[][3]) {
 /// @return True on success
 bool NeoPixelsControl::writePixels(uint8_t RGBW_Values[][4]) {
 	for (int i = 0; i < led_config.LEDCount; i++) {
-		leds->setPixelColor(i, RGBW_Values[i][0], RGBW_Values[i][1], RGBW_Values[i][2], RGBW_Values[i][3]);
+		uint32_t color = leds->Color(RGBW_Values[i][0], RGBW_Values[i][1], RGBW_Values[i][2], RGBW_Values[i][3]);
+		if (led_config.gammaCorrection) {
+			color = leds->gamma32(color);
+		}
+		leds->setPixelColor(i, color);
 	}
 	leds->show();
 	return true;

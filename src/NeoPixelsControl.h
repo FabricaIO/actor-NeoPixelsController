@@ -22,6 +22,9 @@ class NeoPixelsControl : public Actor {
 			/// @brief The number of LEDs in use
 			int LEDCount;
 
+			/// @brief Enables gamma correction of colors for better appearance
+			bool gammaCorrection = false;
+
 			/// @brief The NeoPixel type
 			neoPixelType RGB_Type;
 		} led_config;
