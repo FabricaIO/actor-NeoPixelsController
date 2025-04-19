@@ -45,7 +45,7 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 		if (error) {
 			Logger.print(F("Deserialization failed: "));
 			Logger.println(error.f_str());
-			return { false, R"({"Response": "Error"})" };
+			return { false, R"({"success": false, "Response": "Could not parse payload"})" };
 		}
 		if (doc["RGB_Values"][0].size() == 3) {
 			// Assign loaded values
@@ -67,12 +67,12 @@ std::tuple<bool, String> NeoPixelsControl::receiveAction(int action, String payl
 			}
 			writePixels(RGBW_Values);
 		} else {
-			return { false, R"({"Response": "Error: incorrect number of RGB(W) values"})" };
+			return { false, R"({"success": false, "Response": "Error: incorrect number of RGB(W) values"})" };
 		}
 		// Return success
-		return { true, R"({"Response": "OK"})" };
+		return { true, R"({"success": true})" };
 	} 
-	return { false, R"({"Response": "Error: Unknown action"})" };
+	return { false, R"({"success": false, "Response": "Error: Unknown action"})" };
 }
 
 /// @brief Gets the current config
