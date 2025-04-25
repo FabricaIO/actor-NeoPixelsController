@@ -1,7 +1,9 @@
 /*
 * This file and associated .cpp file are licensed under the GPLv3 License Copyright (c) 2025 Sam Groveman
 * 
+* External libraried needed:
 * ArduinoJSON: https://arduinojson.org/
+* Adafruit_NeoPixel: https://github.com/adafruit/Adafruit_NeoPixel
 *
 * Contributors: Sam Groveman
 */
@@ -12,7 +14,7 @@
 #include <Adafruit_NeoPixel.h>
 
 /// @brief Class describing a generic output on a GPIO pin
-class NeoPixelsControl : public Actor {
+class NeoPixelsController : public Actor {
 	protected:
 		/// @brief Output configuration
 		struct {
@@ -41,7 +43,7 @@ class NeoPixelsControl : public Actor {
 		bool writePixels(uint8_t RGBW_Values[][4]);
 
 	public:
-		NeoPixelsControl(String Name, int Pin, int LEDCount, neoPixelType RGB_Type = NEO_GRB + NEO_KHZ800, String configFile = "NeoPixelsControl.json");
+		NeoPixelsController(String Name, int Pin, int LEDCount, neoPixelType RGB_Type = NEO_GRB + NEO_KHZ800, String configFile = "NeoPixelsController.json");
 		bool begin();
 		std::tuple<bool, String> receiveAction(int action, String payload = "");
 		String getConfig();
