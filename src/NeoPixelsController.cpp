@@ -20,11 +20,10 @@ bool NeoPixelsController::begin() {
 	Description.actionQuantity = 1;
 	Description.type = "output";
 	Description.actions = {{"setcolor", 0}};
-	leds = new Adafruit_NeoPixel(led_config.LEDCount, led_config.Pin, led_config.RGB_Type);
 	// Create settings directory if necessary
 	if (!checkConfig(config_path)) {
 		// Set defaults
-		return saveConfig(config_path, getConfig());
+		return setConfig(getConfig(), true);
 	} else {
 		// Load settings
 		return setConfig(Storage::readFile(config_path), false);
@@ -127,8 +126,7 @@ bool NeoPixelsController::setConfig(String config, bool save) {
 /// @return True on success
 bool NeoPixelsController::configureOutput() {
 	leds = new Adafruit_NeoPixel(led_config.LEDCount, led_config.Pin, led_config.RGB_Type);
-	leds->begin();
-	return true;
+	return leds->begin();
 }
 
 /// @brief Sets the colors of all the LEDs in an RGB strip

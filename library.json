@@ -17,7 +17,7 @@
 	  }
 	],
 	"dependencies": {
-		"Adafruit NeoPixel": "adafruit/Adafruit NeoPixel@^1.12.5"
+		"Adafruit NeoPixel": "adafruit/Adafruit NeoPixel@^1.15.2"
 	},
 	"license": "GPLv3",
 	"homepage": "https://github.com/FabricaIO",
