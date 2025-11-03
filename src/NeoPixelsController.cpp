@@ -17,9 +17,8 @@ NeoPixelsController::NeoPixelsController(String Name, int Pin, int LEDCount, neo
 /// @return True on success
 bool NeoPixelsController::begin() {
 	// Set description
-	Description.actionQuantity = 1;
 	Description.type = "output";
-	Description.actions = {{"setcolor", 0}};
+	Description.actions = {{"setColor", 0}};
 	// Create settings directory if necessary
 	if (!checkConfig(config_path)) {
 		// Set defaults
