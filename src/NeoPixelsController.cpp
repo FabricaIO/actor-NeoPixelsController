@@ -1,5 +1,8 @@
 #include "NeoPixelsController.h"
 
+// Initialize static variables
+SemaphoreHandle_t NeoPixelsController::neoMutex = NULL;
+
 /// @brief Creates a NeoPixel controller
 /// @param Name The device name
 /// @param Pin Pin to use
@@ -19,6 +22,12 @@ bool NeoPixelsController::begin() {
 	// Set description
 	Description.type = "output";
 	Description.actions = {{"setColor", 0}};
+	if (neoMutex == NULL) {
+		neoMutex = xSemaphoreCreateMutex();
+		if (neoMutex == NULL) {
+			return false;
+		}
+	}
 	// Create settings directory if necessary
 	if (!checkConfig(config_path)) {
 		// Set defaults
@@ -132,6 +141,10 @@ bool NeoPixelsController::configureOutput() {
 /// @param RGB_Values The RGB values
 /// @return True on success
 bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
+	if (xSemaphoreTake(neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
+		Logger.println("NeoPixelsController: timeout waiting for mutex");
+		return false;
+	}
 	for (int i = 0; i < led_config.LEDCount; i++) {
 		uint32_t color = leds->Color(RGB_Values[i][0], RGB_Values[i][1], RGB_Values[i][2]);
 		if (led_config.gammaCorrection) {
@@ -140,6 +153,7 @@ bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
 		leds->setPixelColor(i, color);
 	}
 	leds->show();
+	xSemaphoreGive(neoMutex);
 	return true;
 }
 
@@ -147,6 +161,10 @@ bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
 /// @param RGBW_Values The RGBW values
 /// @return True on success
 bool NeoPixelsController::writePixels(uint8_t RGBW_Values[][4]) {
+	if (xSemaphoreTake(neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
+		Logger.println("NeoPixelsController: timeout waiting for mutex");
+		return false;
+	}
 	for (int i = 0; i < led_config.LEDCount; i++) {
 		uint32_t color = leds->Color(RGBW_Values[i][0], RGBW_Values[i][1], RGBW_Values[i][2], RGBW_Values[i][3]);
 		if (led_config.gammaCorrection) {
@@ -155,5 +173,6 @@ bool NeoPixelsController::writePixels(uint8_t RGBW_Values[][4]) {
 		leds->setPixelColor(i, color);
 	}
 	leds->show();
+	xSemaphoreGive(neoMutex);
 	return true;
 }

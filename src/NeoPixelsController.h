@@ -37,6 +37,9 @@ class NeoPixelsController : public Actor {
 		/// @brief LED  driver
 		Adafruit_NeoPixel* leds;
 
+		/// @brief Mutex protecting access to the LED show method
+		static SemaphoreHandle_t neoMutex;
+
 		bool configureOutput();
 
 		bool writePixels(uint8_t RGB_Values[][3]);
