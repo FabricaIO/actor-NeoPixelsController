@@ -1,8 +1,5 @@
 #include "NeoPixelsController.h"
 
-// Initialize static variables
-SemaphoreHandle_t NeoPixelsController::neoMutex = NULL;
-
 /// @brief Creates a NeoPixel controller
 /// @param Name The device name
 /// @param Pin Pin to use
@@ -22,9 +19,8 @@ bool NeoPixelsController::begin() {
 	// Set description
 	Description.type = "output";
 	Description.actions = {{"setColor", 0}};
-	if (neoMutex == NULL) {
-		neoMutex = xSemaphoreCreateMutex();
-		if (neoMutex == NULL) {
+	if (NeoPixelControl::neoMutex == NULL) {
+		if (!NeoPixelControl::createMutex()) {
 			return false;
 		}
 	}
@@ -133,18 +129,20 @@ bool NeoPixelsController::setConfig(String config, bool save) {
 /// @brief Configures the pin for use
 /// @return True on success
 bool NeoPixelsController::configureOutput() {
+	if (xSemaphoreTake(NeoPixelControl::neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
+		Logger.println("LEDIndicator: timeout waiting for mutex");
+		return false;
+	}
 	leds = new Adafruit_NeoPixel(led_config.LEDCount, led_config.Pin, led_config.RGB_Type);
-	return leds->begin();
+	bool result = leds->begin();
+	xSemaphoreGive(NeoPixelControl::neoMutex);
+	return result;
 }
 
 /// @brief Sets the colors of all the LEDs in an RGB strip
 /// @param RGB_Values The RGB values
 /// @return True on success
 bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
-	if (xSemaphoreTake(neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
-		Logger.println("NeoPixelsController: timeout waiting for mutex");
-		return false;
-	}
 	for (int i = 0; i < led_config.LEDCount; i++) {
 		uint32_t color = leds->Color(RGB_Values[i][0], RGB_Values[i][1], RGB_Values[i][2]);
 		if (led_config.gammaCorrection) {
@@ -152,8 +150,12 @@ bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
 		}
 		leds->setPixelColor(i, color);
 	}
+	if (xSemaphoreTake(NeoPixelControl::neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
+		Logger.println("NeoPixelsController: timeout waiting for mutex");
+		return false;
+	}
 	leds->show();
-	xSemaphoreGive(neoMutex);
+	xSemaphoreGive(NeoPixelControl::neoMutex);
 	return true;
 }
 
@@ -161,10 +163,6 @@ bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
 /// @param RGBW_Values The RGBW values
 /// @return True on success
 bool NeoPixelsController::writePixels(uint8_t RGBW_Values[][4]) {
-	if (xSemaphoreTake(neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
-		Logger.println("NeoPixelsController: timeout waiting for mutex");
-		return false;
-	}
 	for (int i = 0; i < led_config.LEDCount; i++) {
 		uint32_t color = leds->Color(RGBW_Values[i][0], RGBW_Values[i][1], RGBW_Values[i][2], RGBW_Values[i][3]);
 		if (led_config.gammaCorrection) {
@@ -172,7 +170,11 @@ bool NeoPixelsController::writePixels(uint8_t RGBW_Values[][4]) {
 		}
 		leds->setPixelColor(i, color);
 	}
+	if (xSemaphoreTake(NeoPixelControl::neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
+		Logger.println("NeoPixelsController: timeout waiting for mutex");
+		return false;
+	}
 	leds->show();
-	xSemaphoreGive(neoMutex);
+	xSemaphoreGive(NeoPixelControl::neoMutex);
 	return true;
 }

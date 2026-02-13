@@ -1,7 +1,7 @@
 /*
 * This file and associated .cpp file are licensed under the GPLv3 License Copyright (c) 2025 Sam Groveman
 * 
-* External libraried needed:
+* External libraries needed:
 * ArduinoJSON: https://arduinojson.org/
 * Adafruit_NeoPixel: https://github.com/adafruit/Adafruit_NeoPixel
 *
@@ -12,6 +12,7 @@
 #include <ArduinoJson.h>
 #include <Actor.h>
 #include <Adafruit_NeoPixel.h>
+#include <NeoPixelControl.h>
 
 /// @brief Class describing a generic output on a GPIO pin
 class NeoPixelsController : public Actor {
@@ -36,9 +37,6 @@ class NeoPixelsController : public Actor {
 		
 		/// @brief LED  driver
 		Adafruit_NeoPixel* leds;
-
-		/// @brief Mutex protecting access to the LED show method
-		static SemaphoreHandle_t neoMutex;
 
 		bool configureOutput();
 
