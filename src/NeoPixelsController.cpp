@@ -130,7 +130,7 @@ bool NeoPixelsController::setConfig(String config, bool save) {
 /// @return True on success
 bool NeoPixelsController::configureOutput() {
 	if (xSemaphoreTake(NeoPixelControl::neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
-		Logger.println("LEDIndicator: timeout waiting for mutex");
+		Logger.println("NeoPixelsController: timeout waiting for mutex");
 		return false;
 	}
 	leds = new Adafruit_NeoPixel(led_config.LEDCount, led_config.Pin, led_config.RGB_Type);
