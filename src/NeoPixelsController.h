@@ -14,12 +14,12 @@
 #include <Adafruit_NeoPixel.h>
 #include <NeoPixelControl.h>
 
-/// @brief Class describing a generic output on a GPIO pin
+/// @brief Class describing a NeoPixel controller
 class NeoPixelsController : public Actor {
 	protected:
-		/// @brief Output configuration
+		/// @brief NeoPixel configuration
 		struct {
-			/// @brief The pin number attached to the output
+			/// @brief The pin number attached to the NeoPixel
 			int Pin;
 
 			/// @brief The number of LEDs in use
