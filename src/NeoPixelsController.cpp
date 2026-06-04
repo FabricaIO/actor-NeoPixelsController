@@ -38,7 +38,7 @@ bool NeoPixelsController::begin() {
 /// @param action The action to process 0 to set colors
 /// @param payload Either an array or RGB(W) values, or a brightness value 0-255
 /// @return JSON response with OK
-std::tuple<bool, String> NeoPixelsController::receiveAction(int action, String payload) {
+std::pair<bool, String> NeoPixelsController::receiveAction(const int action, const String& payload) {
 	if (action == 0) {
 		// Allocate the JSON document
 		JsonDocument doc;

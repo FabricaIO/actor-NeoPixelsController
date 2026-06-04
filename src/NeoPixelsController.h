@@ -46,7 +46,7 @@ class NeoPixelsController : public Actor {
 	public:
 		NeoPixelsController(String Name, int Pin, int LEDCount, neoPixelType RGB_Type = NEO_GRB + NEO_KHZ800, String configFile = "NeoPixelsController.json");
 		bool begin();
-		std::tuple<bool, String> receiveAction(int action, String payload = "");
+		std::pair<bool, String> receiveAction(const int action, const String& payload = "");
 		String getConfig();
 		bool setConfig(String config, bool save);
 };
