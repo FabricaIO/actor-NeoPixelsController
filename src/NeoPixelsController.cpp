@@ -143,16 +143,16 @@ bool NeoPixelsController::configureOutput() {
 /// @param RGB_Values The RGB values
 /// @return True on success
 bool NeoPixelsController::writePixels(uint8_t RGB_Values[][3]) {
+	if (xSemaphoreTake(NeoPixelControl::neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
+		Logger.println("NeoPixelsController: timeout waiting for mutex");
+		return false;
+	}
 	for (int i = 0; i < led_config.LEDCount; i++) {
 		uint32_t color = leds->Color(RGB_Values[i][0], RGB_Values[i][1], RGB_Values[i][2]);
 		if (led_config.gammaCorrection) {
 			color = leds->gamma32(color);
 		}
 		leds->setPixelColor(i, color);
-	}
-	if (xSemaphoreTake(NeoPixelControl::neoMutex, pdMS_TO_TICKS(1000)) == pdFALSE) {
-		Logger.println("NeoPixelsController: timeout waiting for mutex");
-		return false;
 	}
 	leds->show();
 	xSemaphoreGive(NeoPixelControl::neoMutex);
